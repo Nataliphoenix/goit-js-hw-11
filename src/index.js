@@ -65,13 +65,11 @@ function onSearchCard(e){
       
       return
       
-    }else{
+    } else {
       refs.finalMsg.classList.remove('show');
     }
  
     });
-
-    
 
 }
 
