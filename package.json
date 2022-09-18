@@ -14,9 +14,6 @@
   "keywords": [],
   "author": "Alexander Repeta <alexander.repeta@gmail.com>",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/goitacademy/parcel-project-template/issues"
-  },
   "dependencies": {
     "@swc/helpers": "^0.4.11",
     "axios": "^0.27.2",
@@ -33,6 +30,6 @@
     "posthtml-include": "^1.7.4",
     "process": "^0.11.10"
   },
-  "browserslist": "> 0.5%, last 2 versions, not dead",
-  "main": "index.js"
+  "browserslist": "> 0.5%, last 2 versions, not dead"
+  
 }
