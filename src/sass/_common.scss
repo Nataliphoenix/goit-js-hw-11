@@ -80,22 +80,6 @@ input {
       }
 }
 
-
-
-// .load-more {
-//       display: block;
-//       margin-left: auto;
-//       margin-right: auto;
-// }
-
-// .load-more.is-hidden {
-//       display: none;
-// }
-
-// .load-more>.spinner.is-hidden {
-//       display: none;
-// }
-
 .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
