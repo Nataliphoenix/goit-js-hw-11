@@ -7,12 +7,27 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 import cardMarkupTpl from './templates/cardMarkupTpl.hbs';
 import DataApiService from './js/dataApiService';
 
+// import debounce from 'lodash.debounce';
+
+// const DEBOUNCE_DELAY = 300;
+
 const refs = {
   searchForm: document.querySelector('#search-form'),
   galleryContainer: document.querySelector('.gallery'),
   loading: document.querySelector('.loading'),  
-  finalMsg: document.querySelector('.final-msg'), 
+  finalMsg: document.querySelector('.final-msg'),
+  sentinel: document.querySelector('#sentinel'), 
 }
+
+let gallery = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionPosition: 'bottom', 
+  captionDelay:250,
+  enableKeyboard: true,
+  spinner: true,
+  doubleTapZoom:	2,
+  alertErrorMessage:'Image not found, next image will be loaded',  
+})
 
 const dataApiService = new DataApiService();
   
@@ -33,7 +48,6 @@ function onSearchCard(e){
     return
   }
 
-  
   console.log('searchValue', dataApiService.inputValue);
 
   dataApiService.getUserSearch().then( responseData => {
@@ -45,20 +59,9 @@ function onSearchCard(e){
     }
       Notiflix.Notify.success( `Hooray! We found ${responseData.total} images.` );
   
-      let gallery = new SimpleLightbox('.gallery a', {
-        captionsData: 'alt',
-        captionPosition: 'bottom', 
-        captionDelay:250,
-        enableKeyboard: true,
-        spinner: true,
-        doubleTapZoom:	2,
-        alertErrorMessage:'Image not found, next image will be loaded',  
-    },
-    ('refresh.simplelightbox', renderSearchCard(responseData.hits)));
-
+      gallery.refresh(renderSearchCard(responseData.hits));
     
-
-    if( Math.ceil(responseData.total / perPage) === dataApiService.page || Math.ceil(responseData.total / perPage) === 1 ){
+      if( Math.ceil(responseData.total / perPage) === dataApiService.page || Math.ceil(responseData.total / perPage) === 1 ){
       refs.finalMsg.classList.add('show');
       console.log('totalPages',(Math.ceil(responseData.totalHits / perPage)))
       console.log('dataApiService.page', dataApiService.page)
@@ -72,6 +75,62 @@ function onSearchCard(e){
     });
 
 }
+
+// window.addEventListener('scroll', debounce(() => {
+// const lastCardObserver = new IntersectionObserver(entries => {
+//   const lastCard = entries[0]
+//   // const lastCard = refs.galleryContainer[40]
+//   if(!lastCard.isIntersecting){
+//     lastCardObserver.unobserve(lastCard.target)
+//     console.log('НЕЕЕ')
+
+//     return
+//   } else if(lastCard.isIntersecting) {
+//     console.log('Ура')
+//     lastCardObserver.unobserve(lastCard.target);
+    
+//     dataApiService.incrementPage();
+//     showLoading();
+  
+//     setTimeout(lastCardObserver.observe(refs.galleryContainer.lastElementChild), 1000)
+//   }
+  
+// }, {});
+
+// lastCardObserver.observe(refs.galleryContainer.lastElementChild);
+
+// }, DEBOUNCE_DELAY))
+
+////////////////////////////////////////////
+
+// window.addEventListener('scroll', debounce(() => {
+// const lastCardObserver = new IntersectionObserver(entries => {
+  
+//   let arrayGalleryContainer = refs.galleryContainer.children;
+//   console.log(arrayGalleryContainer)
+//   for (let i = perPage -1 ; i < arrayGalleryContainer.length; i += perPage ){
+//     let lastCard = i;
+//     lastCard = entries[0];
+//     console.log(lastCard)
+//     if(!lastCard.isIntersecting){
+//       console.log('НЕЕЕЕ')
+//       return
+//     }
+
+//     dataApiService.incrementPage();
+
+//     showLoading()
+//     console.log('УРААА')
+//   }
+  
+
+// }, {})
+
+// lastCardObserver.observe(refs.galleryContainer);
+
+// }, DEBOUNCE_DELAY))
+
+/////////////////////////
 
 window.addEventListener('scroll', () => {
   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
@@ -91,20 +150,12 @@ function showLoading(){
   //load more date
   dataApiService.getUserSearch().then( responseData => {
     
-    let gallery = new SimpleLightbox('.gallery a', {
-      captionsData: 'alt',
-      captionPosition: 'bottom', 
-      captionDelay:250,
-      enableKeyboard: true,
-      spinner: true,
-      doubleTapZoom:	2,
-      alertErrorMessage:'Image not found, next image will be loaded',
-      
-  },('refresh.simplelightbox', renderSearchCard(responseData.hits)));
+    gallery.refresh(renderSearchCard(responseData.hits));
 
-   setTimeout(refs.loading.classList.remove('show'), 1000);
+    refs.loading.classList.remove('show');
 
   })
+  
 
 }
 
